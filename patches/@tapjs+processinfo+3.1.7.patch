@@ -1,0 +1,12 @@
+diff --git a/node_modules/@tapjs/processinfo/dist/esm/get-process-info.js b/node_modules/@tapjs/processinfo/dist/esm/get-process-info.js
+index 3a6ab25..284b784 100644
+--- a/node_modules/@tapjs/processinfo/dist/esm/get-process-info.js
++++ b/node_modules/@tapjs/processinfo/dist/esm/get-process-info.js
+@@ -1,6 +1,6 @@
+ // we always want this
+ const p = process;
+-p.setSourceMapsEnabled(true);
++p.setSourceMapsEnabled && p.setSourceMapsEnabled(true);
+ import { v4 as uuid } from 'uuid';
+ import { getMain } from './get-main.js';
+ const envKey = (k) => `_TAPJS_PROCESSINFO_${k.toUpperCase()}_`;

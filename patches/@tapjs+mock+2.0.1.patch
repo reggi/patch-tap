@@ -1,0 +1,92 @@
+diff --git a/node_modules/@tapjs/mock/dist/esm/hooks.mjs b/node_modules/@tapjs/mock/dist/esm/hooks.mjs
+index fc0095d..61ddc55 100644
+--- a/node_modules/@tapjs/mock/dist/esm/hooks.mjs
++++ b/node_modules/@tapjs/mock/dist/esm/hooks.mjs
+@@ -22,9 +22,7 @@ export const initialize = ({ port }) => {
+ };
+ export const load = async (url, context, nextLoad) => {
+     if (!client) {
+-        throw new Error('initialize() or globalPreload() must be run prior to ' +
+-            'running the load() hook. Did you --loader when you meant ' +
+-            '--import or vice versa?');
++        return nextLoad(url, context);
+     }
+     const source = await client.load(url);
+     return source ?
+@@ -37,9 +35,7 @@ export const load = async (url, context, nextLoad) => {
+ };
+ export const resolve = async (url, context, nextResolve) => {
+     if (!client) {
+-        throw new Error('initialize() or globalPreload() must be run prior to ' +
+-            'running the resolve() hook. Did you --loader when you meant ' +
+-            '--import or vice versa?');
++        return nextResolve(url, context);
+     }
+     const response = await client.resolve(url, context.parentURL);
+     return response && response.startsWith('tapmock://') ?
+diff --git a/node_modules/@tapjs/mock/dist/esm/index.js b/node_modules/@tapjs/mock/dist/esm/index.js
+index aaa2218..5029297 100644
+--- a/node_modules/@tapjs/mock/dist/esm/index.js
++++ b/node_modules/@tapjs/mock/dist/esm/index.js
+@@ -1,6 +1,17 @@
+ import { plugin as AfterPlugin } from '@tapjs/after';
+ import * as stack from '@tapjs/stack';
+-import { isBuiltin } from 'node:module';
++
++import Module from 'module';
++
++const moduleSet = new Set(Module.builtinModules)
++const NODE_PROTOCOL = 'node:'
++export const isBuiltin = (moduleName) => {
++  if (moduleName.startsWith(NODE_PROTOCOL)) {
++    moduleName = moduleName.slice(NODE_PROTOCOL.length)
++  }
++  return moduleSet.has(moduleName)
++}
++
+ import { mockRequire } from './mock-require.js';
+ import { MockService } from './mock-service.js';
+ /**
+diff --git a/node_modules/@tapjs/mock/dist/esm/mock-require.js b/node_modules/@tapjs/mock/dist/esm/mock-require.js
+index 223323e..398df30 100644
+--- a/node_modules/@tapjs/mock/dist/esm/mock-require.js
++++ b/node_modules/@tapjs/mock/dist/esm/mock-require.js
+@@ -2,7 +2,17 @@
+  * Implementation of the {@link TapMock#mockRequire} method
+  */
+ import * as stack from '@tapjs/stack';
+-import Module, { createRequire, isBuiltin } from 'module';
++import Module, { createRequire } from 'module';
++
++const moduleSet = new Set(Module.builtinModules)
++const NODE_PROTOCOL = 'node:'
++export const isBuiltin = (moduleName) => {
++  if (moduleName.startsWith(NODE_PROTOCOL)) {
++    moduleName = moduleName.slice(NODE_PROTOCOL.length)
++  }
++  return moduleSet.has(moduleName)
++}
++
+ import { dirname, resolve } from 'path';
+ import { walkUp } from 'walk-up-path';
+ const CorrectModule = Module;
+diff --git a/node_modules/@tapjs/mock/dist/esm/munge-mocks.js b/node_modules/@tapjs/mock/dist/esm/munge-mocks.js
+index 8ab8036..f7d9944 100644
+--- a/node_modules/@tapjs/mock/dist/esm/munge-mocks.js
++++ b/node_modules/@tapjs/mock/dist/esm/munge-mocks.js
+@@ -1,4 +1,14 @@
+-import { isBuiltin } from 'module';
++import Module from 'module';
++
++const moduleSet = new Set(Module.builtinModules)
++const NODE_PROTOCOL = 'node:'
++export const isBuiltin = (moduleName) => {
++  if (moduleName.startsWith(NODE_PROTOCOL)) {
++    moduleName = moduleName.slice(NODE_PROTOCOL.length)
++  }
++  return moduleSet.has(moduleName)
++}
++
+ import { isAbsolute, resolve } from 'path';
+ import { isRelativeRequire } from 'resolve-import/is-relative-require';
+ import { pathToFileURL } from 'url';

@@ -1,0 +1,23 @@
+diff --git a/node_modules/resolve-import/dist/esm/resolve-import.js b/node_modules/resolve-import/dist/esm/resolve-import.js
+index f83726b..9607a35 100644
+--- a/node_modules/resolve-import/dist/esm/resolve-import.js
++++ b/node_modules/resolve-import/dist/esm/resolve-import.js
+@@ -3,7 +3,17 @@
+  * @module
+  */
+ import { realpath } from 'fs/promises';
+-import { isBuiltin } from 'module';
++import module from 'module'
++
++const moduleSet = new Set(module.builtinModules)
++const NODE_PROTOCOL = 'node:'
++export const isBuiltin = (moduleName) => {
++  if (moduleName.startsWith(NODE_PROTOCOL)) {
++    moduleName = moduleName.slice(NODE_PROTOCOL.length)
++  }
++  return moduleSet.has(moduleName)
++}
++
+ import { basename, dirname, isAbsolute, resolve } from 'path';
+ import { fileURLToPath, pathToFileURL } from 'url';
+ import { moduleNotFound, relativeImportWithoutParentURL, } from './errors.js';

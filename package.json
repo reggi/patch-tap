@@ -1,0 +1,21 @@
+{
+  "name": "patch-tap",
+  "version": "19.0.2",
+  "main": "index.js",
+  "bin": {
+    "patch-tap": "patch-package --patch-dir=./node_modules/patch-tap/patches"
+  },
+  "scripts": {
+    "test": "tap"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "patch-package": "^8.0.0",
+    "tap": "^19.0.2",
+    "zx": "^8.1.2"
+  },
+  "tap": {}
+}

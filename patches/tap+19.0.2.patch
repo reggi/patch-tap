@@ -1,0 +1,13 @@
+diff --git a/node_modules/tap/dist/esm/run.mjs b/node_modules/tap/dist/esm/run.mjs
+index 84a216b..05dba0a 100755
+--- a/node_modules/tap/dist/esm/run.mjs
++++ b/node_modules/tap/dist/esm/run.mjs
+@@ -3,7 +3,7 @@
+  * just load the `@tapjs/run` module, which does all the work
+  */
+ //@ts-ignore
+-process.setSourceMapsEnabled(true);
++process.setSourceMapsEnabled && process.setSourceMapsEnabled(true);
+ import { resolve } from 'node:path';
+ import { pathToFileURL } from 'node:url';
+ // Try to load the tap runner that's installed in the current project,
